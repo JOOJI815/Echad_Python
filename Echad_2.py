@@ -81,9 +81,9 @@ else:
 # 3. 공통 옵션 설정
 st.write("---")
 c1, c2, c3 = st.columns(3)
-option_2h = c1.checkbox("2시간 사용")
+option_2h = c1.checkbox("2시간 사용", value=True)
 option_light = c2.checkbox("조명 사용")
-option_wait = c3.checkbox("25일 대기 모드", value=True)
+option_wait = c3.checkbox("25일 대기 모드", value=False)
 
 is_test = st.toggle("테스트 모드 (실제 예약 시 반드시 끌 것)", value=True)
 
