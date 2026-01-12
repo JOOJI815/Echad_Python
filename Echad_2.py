@@ -53,7 +53,7 @@ with st.form("booking_form"):
     submit = st.form_submit_button("예약 시작 (START)")
 
 # [추가된 부분] 2. 공식 사이트 바로가기 버튼 (폼 바깥이나 아래에 배치)
-st.link_button("🌐 공식 예약 페이지 열기", "http://www.scdaedeok.or.kr//rest/arenas/bookingsheet", use_container_width=True)
+st.link_button("🌐 공식 예약 페이지 열기", "http://www.scdaedeok.or.kr", use_container_width=True)
 
 
 # --- 예약 로직 (기존 C# 로직과 동일) ---
@@ -136,4 +136,5 @@ if submit:
 
     status_text.success(f"✅ 작업 완료! 성공: {success_count}건 / 총액: {total_money}원")
     st.balloons()
+
 
