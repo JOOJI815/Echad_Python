@@ -83,7 +83,7 @@ st.write("---")
 c1, c2, c3 = st.columns(3)
 option_2h = c1.checkbox("2시간 사용", value=True)
 option_light = c2.checkbox("조명 사용")
-option_wait = c3.checkbox("25일 대기 모드", value=False)
+option_wait = c3.checkbox("25일 대기 모드")
 
 is_test = st.toggle("테스트 모드 (실제 예약 시 반드시 끌 것)", value=True)
 
@@ -171,3 +171,4 @@ if submit:
 
     st.success(f"✅ 모든 작업 완료! 성공: {success_count}건 / 총액: {total_money}원")
     st.balloons()
+
