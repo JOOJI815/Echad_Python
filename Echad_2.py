@@ -29,7 +29,7 @@ with st.form("booking_form"):
     option_wait = c3.checkbox("25일 대기 모드", value=True)
 
     # 실제 예약을 하려면 이 토글을 꺼야 합니다.
-    is_test = st.toggle("테스트 모드 (실제 예약 안함)", value=True)
+    is_test = st.toggle("테스트 모드 (실제 예약 안함)", value=False)
 
     submit = st.form_submit_button("예약 시작 (START)")
 
@@ -121,5 +121,6 @@ if submit:
 
     status_text.success(f"✅ 작업 완료! 성공: {success_count}건 / 총액: {total_money}원")
     st.balloons()
+
 
 
