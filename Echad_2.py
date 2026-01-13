@@ -1,20 +1,62 @@
 import streamlit as st
 import requests
 import time
+import hashlib
 from datetime import datetime, timedelta
 
-# --- [가격 정책 변수화] ---
-WEEKEND_RATE = 25000  # 주말 1시간 대관료
-WEEKDAY_RATE = 12500  # 평일 1시간 대관료
-LIGHT_RATE = 10000  # 조명 이용료 (회당 고정)
+# --- [비밀번호 보안 설정] ---
+# "0815" + 줄바꿈(\n)에 대한 SHA-256 해시값입니다.
+PASSWORD_HASH = "06f15694a946328694086e2467d589d8f635f79579fa5527a05193988675631c"
 
-# --- 세션 상태 초기화 ---
+
+def check_password(input_pw):
+    """입력받은 비밀번호를 해싱하여 비교합니다."""
+    if not input_pw:
+        return False
+    # 앞뒤 공백 제거 후, 이전 환경과 동일하게 줄바꿈(\n)을 붙여서 해시를 생성합니다.
+    clean_pw = input_pw.strip()
+    hashed_input = hashlib.sha256((clean_pw + "\n").encode('utf-8')).hexdigest().lower()
+    return hashed_input == PASSWORD_HASH
+
+
+# --- [가격 정책 변수화] ---
+WEEKEND_RATE = 25000
+WEEKDAY_RATE = 12500
+LIGHT_RATE = 10000
+
+# --- [세션 상태 관리] ---
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
+
 if 'selected_dates' not in st.session_state:
     st.session_state.selected_dates = set()
 
-# --- UI 구성 ---
+# --- [로그인 화면] ---
+if not st.session_state.authenticated:
+    st.set_page_config(page_title="인증 필요", layout="centered")
+    st.title("🔐 SCDA 예약 시스템 접속")
+
+    pw_input = st.text_input("비밀번호를 입력하세요", type="password")
+
+    if st.button("접속하기"):
+        if check_password(pw_input):
+            st.session_state.authenticated = True
+            st.success("✅ 인증 성공!")
+            st.rerun()
+        else:
+            st.error("❌ 비밀번호가 틀렸습니다.")
+
+    st.stop()
+
+# --- [여기부터 인증된 사용자 화면] ---
 st.set_page_config(page_title="SCDA 스마트 예약기", layout="wide")
 st.title("⚽ SCDA 스마트 예약 시스템")
+
+with st.sidebar:
+    st.subheader("⚙️ 설정")
+    if st.button("로그아웃"):
+        st.session_state.authenticated = False
+        st.rerun()
 
 # 1. 사용자 정보 입력
 with st.expander("👤 사용자 정보 설정", expanded=True):
@@ -28,7 +70,6 @@ mode = st.radio("원하는 방식을 선택하세요", ["요일 반복 (기존)"
 time_options = [f"{i:02d}:00" for i in range(6, 23)]
 booking_targets = []
 
-# 날짜 계산 (다음 달)
 now = datetime.now()
 next_month_start = (now.replace(day=28) + timedelta(days=4)).replace(day=1)
 target_year = next_month_start.year
@@ -129,7 +170,6 @@ if submit:
     headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
 
     for i, (target_date, target_time, target_2h, target_light) in enumerate(booking_targets):
-        # 1. 시간 및 기간 설정
         hour_start = target_time[:2]
         final_time_str = hour_start
         usage_hours = 1
@@ -137,22 +177,16 @@ if submit:
             final_time_str = f"{hour_start},{int(hour_start) + 1}"
             usage_hours = 2
 
-        # 2. [수정된 금액 계산 로직]
         is_weekend = target_date.weekday() >= 5
         base_rate = WEEKEND_RATE if is_weekend else WEEKDAY_RATE
-
-        # 조명비는 사용 시간에 관계없이 체크 시 고정 금액 합산
         current_light_fee = LIGHT_RATE if target_light else 0
-
-        # 공식: (대관료 * 시간) + 조명비
         current_amt = (base_rate * usage_hours) + current_light_fee
 
         payload = {
             "applicantName": name, "cellphone": clean_number, "teamName": name,
             "memberCount": "14", "objectId": "SF0.1",
             "bookingDate": target_date.strftime("%Y/%m/%d"),
-            "bookingTime": final_time_str,
-            "useLight": "Y" if target_light else "N",
+            "bookingTime": final_time_str, "useLight": "Y" if target_light else "N",
             "amount": str(current_amt)
         }
 
