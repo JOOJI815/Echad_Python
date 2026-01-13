@@ -75,8 +75,8 @@ if not st.session_state.authenticated:
     st.stop()
 
 # --- [여기부터 인증된 사용자 화면] ---
-st.set_page_config(page_title="SCDA 스마트 예약기", layout="wide")
-st.title("⚽ SCDA 스마트 예약 시스템")
+st.set_page_config(page_title="ECHAD 스마트 예약기", layout="wide")
+st.title("⚽ ECHAD 스마트 예약 시스템")
 
 with st.sidebar:
     st.subheader("⚙️ 설정")
@@ -165,7 +165,7 @@ else:
 # 3. 공통 시스템 설정
 st.write("---")
 c1, c2 = st.columns(2)
-option_wait = c1.checkbox("🕒 25일 대기 모드 (09:59:55 타겟)", value=False)
+option_wait = c1.checkbox("🕒 25일 대기 모드 (09:59:55 타겟)", value=True)
 is_test = c2.toggle("🧪 테스트 모드 (실제 예약 시 반드시 끌 것)", value=False)
 
 submit = st.button("🚀 예약 작업 시작 (START)", use_container_width=True)
