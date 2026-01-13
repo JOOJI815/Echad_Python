@@ -5,8 +5,7 @@ import hashlib
 from datetime import datetime, timedelta
 
 # --- [비밀번호 보안 설정] ---
-# "0815" + 줄바꿈(\n)에 대한 SHA-256 해시값입니다.
-PASSWORD_HASH = "06f15694a946328694086e2467d589d8f635f79579fa5527a05193988675631c"
+PASSWORD_HASH = "c57a5df4f97ed6914116e5fd1348406064834f22503d890eb571af442ac4b4c3"
 
 
 def check_password(input_pw):
@@ -15,7 +14,7 @@ def check_password(input_pw):
         return False
     # 앞뒤 공백 제거 후, 이전 환경과 동일하게 줄바꿈(\n)을 붙여서 해시를 생성합니다.
     clean_pw = input_pw.strip()
-    hashed_input = hashlib.sha256((clean_pw + "\n").encode('utf-8')).hexdigest().lower()
+    hashed_input = hashlib.sha256((clean_pw).encode('utf-8')).hexdigest().lower()
     return hashed_input == PASSWORD_HASH
 
 
@@ -45,6 +44,7 @@ if not st.session_state.authenticated:
             st.rerun()
         else:
             st.error("❌ 비밀번호가 틀렸습니다.")
+            st.write(f"입력된 해시: {hashlib.sha256(pw_input.strip().encode()).hexdigest()}")
 
     st.stop()
 
