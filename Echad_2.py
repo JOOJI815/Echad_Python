@@ -2,16 +2,15 @@ import streamlit as st
 import requests
 import time
 import hashlib
-from datetime import datetime, timedelta
 import os
+from datetime import datetime, timedelta
 
-# --- [비밀번호 보안 설정] ---
-PASSWORD_HASH = "c57a5df4f97ed6914116e5fd1348406064834f22503d890eb571af442ac4b4c3"
-
-# --- 설정 및 데이터 로드 ---
+# --- [설정 및 파일 관리] ---
 USER_FILE = "User.txt"
 
-def load_data():
+
+def load_user_data():
+    """파일에서 이름과 전화번호를 로드합니다."""
     if os.path.exists(USER_FILE):
         try:
             with open(USER_FILE, "r", encoding="utf-8") as f:
@@ -22,17 +21,27 @@ def load_data():
             pass
     return "", ""
 
-def save_data(name, number):
-    with open(USER_FILE, "w", encoding="utf-8") as f:
-        f.write(f"{name}\n{number}")
+
+def save_user_data(name, number):
+    """파일에 이름과 전화번호를 저장합니다."""
+    try:
+        with open(USER_FILE, "w", encoding="utf-8") as f:
+            f.write(f"{name}\n{number}")
+    except:
+        pass
+
+
+# --- [비밀번호 보안 설정] ---
+# 요청하신 새로운 해시값
+PASSWORD_HASH = "c57a5df4f97ed6914116e5fd1348406064834f22503d890eb571af442ac4b4c3"
+
 
 def check_password(input_pw):
     """입력받은 비밀번호를 해싱하여 비교합니다."""
     if not input_pw:
         return False
-    # 앞뒤 공백 제거 후, 이전 환경과 동일하게 줄바꿈(\n)을 붙여서 해시를 생성합니다.
-    clean_pw = input_pw.strip()
-    hashed_input = hashlib.sha256((clean_pw).encode('utf-8')).hexdigest().lower()
+    # 앞뒤 공백만 제거하고 순수하게 해싱합니다.
+    hashed_input = hashlib.sha256(input_pw.strip().encode('utf-8')).hexdigest().lower()
     return hashed_input == PASSWORD_HASH
 
 
@@ -62,7 +71,6 @@ if not st.session_state.authenticated:
             st.rerun()
         else:
             st.error("❌ 비밀번호가 틀렸습니다.")
-            st.write(f"입력된 해시: {hashlib.sha256(pw_input.strip().encode()).hexdigest()}")
 
     st.stop()
 
@@ -76,13 +84,12 @@ with st.sidebar:
         st.session_state.authenticated = False
         st.rerun()
 
-saved_name, saved_number = load_data()
+# 1. 사용자 정보 입력 (파일에서 로드한 값 적용)
+saved_name, saved_number = load_user_data()
 
-# 1. 사용자 정보 입력
 with st.expander("👤 사용자 정보 설정", expanded=True):
     name = st.text_input("신청자 이름", value=saved_name, placeholder="예: 홍길동")
-    number = st.text_input("전화번호", value=saved_number, placeholder="01012345678 (숫자만 입력)")
-
+    number = st.text_input("전화번호", value=saved_number, placeholder="01012345678 (숫자만)")
 
 # 2. 예약 방식 선택
 st.subheader("📅 예약 방식 선택")
@@ -166,6 +173,9 @@ st.link_button("🌐 공식 사이트 확인", "http://www.scdaedeok.or.kr//aren
 
 # --- 예약 실행 로직 ---
 if submit:
+    # 데이터 저장 호출
+    save_user_data(name, number)
+
     clean_number = "".join(filter(str.isdigit, number))
     if not name.strip() or len(clean_number) != 11:
         st.error("⚠️ 이름과 전화번호(11자리)를 정확히 입력해주세요.")
@@ -186,8 +196,6 @@ if submit:
     progress_bar = st.progress(0)
     success_count = 0
     total_money = 0
-
-    save_data()
 
     url = "http://www.scdaedeok.or.kr//rest/arenas/bookingsheet"
     headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
