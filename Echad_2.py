@@ -3,10 +3,28 @@ import requests
 import time
 import hashlib
 from datetime import datetime, timedelta
+import os
 
 # --- [비밀번호 보안 설정] ---
 PASSWORD_HASH = "c57a5df4f97ed6914116e5fd1348406064834f22503d890eb571af442ac4b4c3"
 
+# --- 설정 및 데이터 로드 ---
+USER_FILE = "User.txt"
+
+def load_data():
+    if os.path.exists(USER_FILE):
+        try:
+            with open(USER_FILE, "r", encoding="utf-8") as f:
+                lines = f.read().splitlines()
+                if len(lines) >= 2:
+                    return lines[0], lines[1]
+        except:
+            pass
+    return "", ""
+
+def save_data(name, number):
+    with open(USER_FILE, "w", encoding="utf-8") as f:
+        f.write(f"{name}\n{number}")
 
 def check_password(input_pw):
     """입력받은 비밀번호를 해싱하여 비교합니다."""
@@ -58,10 +76,13 @@ with st.sidebar:
         st.session_state.authenticated = False
         st.rerun()
 
+saved_name, saved_number = load_data()
+
 # 1. 사용자 정보 입력
 with st.expander("👤 사용자 정보 설정", expanded=True):
-    name = st.text_input("신청자 이름", value="", placeholder="예: 홍길동")
-    number = st.text_input("전화번호", value="", placeholder="01012345678 (숫자만)")
+    name = st.text_input("신청자 이름", value=saved_name, placeholder="예: 홍길동")
+    number = st.text_input("전화번호", value=saved_number, placeholder="01012345678 (숫자만 입력)")
+
 
 # 2. 예약 방식 선택
 st.subheader("📅 예약 방식 선택")
@@ -165,6 +186,8 @@ if submit:
     progress_bar = st.progress(0)
     success_count = 0
     total_money = 0
+
+    save_data()
 
     url = "http://www.scdaedeok.or.kr//rest/arenas/bookingsheet"
     headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
