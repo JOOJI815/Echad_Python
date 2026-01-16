@@ -31,11 +31,6 @@ def save_user_data(name, number):
         pass
 
 
-# --- [비밀번호 보안 설정] ---
-# 요청하신 새로운 해시값
-PASSWORD_HASH = "c57a5df4f97ed6914116e5fd1348406064834f22503d890eb571af442ac4b4c3"
-
-
 def check_password(input_pw):
 
     # """입력받은 비밀번호를 해싱하여 비교합니다."""
@@ -46,14 +41,6 @@ def check_password(input_pw):
         return True
     else:
         return False
-
-    # """입력받은 비밀번호를 해싱하여 비교합니다."""
-    # if not input_pw:
-    #    return False
-    # # 앞뒤 공백만 제거하고 순수하게 해싱합니다.
-    # hashed_input = hashlib.sha256(input_pw.strip().encode('utf-8')).hexdigest().lower()
-    # return hashed_input == PASSWORD_HASH
-
 
 # --- [가격 정책 변수화] ---
 WEEKEND_RATE = 25000
@@ -251,3 +238,4 @@ if submit:
 
     st.success(f"✅ 완료! 성공: {success_count}건 / 총액: {total_money}원")
     st.balloons()
+
