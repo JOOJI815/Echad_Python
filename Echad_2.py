@@ -194,7 +194,8 @@ if submit:
     success_count = 0
     total_money = 0
 
-    url = "http://www.scdaedeok.or.kr//rest/arenas/bookingsheet"
+    #url = "http://www.scdaedeok.or.kr//rest/arenas/bookingsheet"
+    url = "https://scdaedeok.or.kr/arena_booking.html?arenaId=SF0.1"
     headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
 
     for i, (target_date, target_time, target_2h, target_light) in enumerate(booking_targets):
