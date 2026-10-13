@@ -166,7 +166,7 @@ option_wait = c1.checkbox("🕒 25일 대기 모드 (09:59:55 타겟)", value=Tr
 is_test = c2.toggle("🧪 테스트 모드 (실제 예약 시 반드시 끌 것)", value=False)
 
 submit = st.button("🚀 예약 작업 시작 (START)", use_container_width=True)
-st.link_button("🌐 공식 사이트 확인", "http://www.scdaedeok.or.kr//arena_booking.html?arenaId=SF0.1", use_container_width=True)
+st.link_button("🌐 공식 사이트 확인", "https://scdaedeok.or.kr/arena_booking.html?arenaId=SF0.1", use_container_width=True)
 
 # --- 예약 실행 로직 ---
 if submit:
@@ -197,7 +197,9 @@ if submit:
     #url = "http://www.scdaedeok.or.kr//rest/arenas/bookingsheet"
     url = "https://scdaedeok.or.kr/arena_booking.html?arenaId=SF0.1"
     #url = "https://scdaedeok.or.kr/rest/arenas/bookingsheet"
-    headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
+    
+    #headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
+    headers = {"Content-Type": "application/json; charSet=UTF-8", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36"}
 
     for i, (target_date, target_time, target_2h, target_light) in enumerate(booking_targets):
         hour_start = target_time[:2]
