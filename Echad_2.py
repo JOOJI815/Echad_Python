@@ -195,8 +195,8 @@ if submit:
     total_money = 0
 
     #url = "http://www.scdaedeok.or.kr//rest/arenas/bookingsheet"
-    url = "https://scdaedeok.or.kr/arena_booking.html?arenaId=SF0.1"
-    #url = "https://scdaedeok.or.kr/rest/arenas/bookingsheet"
+    #url = "https://scdaedeok.or.kr/arena_booking.html?arenaId=SF0.1"
+    url = "https://scdaedeok.or.kr/rest/arenas/bookingsheet"
     
     #headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
     headers = {"Content-Type": "application/json; charSet=UTF-8", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36"}
